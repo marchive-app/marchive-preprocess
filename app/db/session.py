@@ -45,6 +45,13 @@ def get_engine() -> Engine:
         echo=s.sql_echo,
         echo_pool=s.sql_echo,
         future=True,
+        # 세션 타임존을 UTC 로 못박는다. claimed_at 같은 DATETIME 컬럼에는 타임존이
+        # 붙지 않으므로, NOW() 가 무엇을 뜻하는지는 순전히 커넥션 설정에 달려 있다.
+        # 이걸 고정하지 않으면 좀비 회수의 시각 비교가
+        #   "워커가 값을 넣을 때의 타임존" vs "DB 가 NOW() 를 계산하는 타임존"
+        # 으로 갈려서, 서버나 컨테이너 로캘이 바뀌는 순간 조용히 어긋난다.
+        # (KST 서버라면 9시간 차이 → 회수가 9시간 늦거나, 멀쩡한 행을 회수한다)
+        connect_args={"init_command": "SET time_zone = '+00:00'"},
     )
 
 

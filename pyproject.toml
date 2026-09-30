@@ -23,4 +23,10 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ipykernel>=7.3.0",
+    "pytest>=9.1.1",
 ]
+
+[tool.pytest.ini_options]
+# tests/ 가 app 을 임포트할 수 있게 프로젝트 루트를 sys.path 에 넣는다.
+pythonpath = ["."]
+testpaths = ["tests"]
